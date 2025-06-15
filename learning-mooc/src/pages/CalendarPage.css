@@ -1,0 +1,35 @@
+/* Calendar dark mode overrides */
+.calendar-dark .react-calendar {
+  background-color: #1f2937; /* gray-800 */
+  color: white;
+  border-radius: 1rem;
+}
+
+.calendar-dark .react-calendar__navigation button {
+  color: white;
+  background-color: transparent;
+}
+
+.calendar-dark .react-calendar__tile {
+  background-color: transparent;
+  color: white;
+}
+
+.calendar-dark .react-calendar__tile--now {
+  background-color: #4f46e5; /* Indigo for today */
+  color: white;
+}
+
+.calendar-dark .react-calendar__tile--active {
+  background-color: #7c3aed !important; /* Purple for selected */
+  color: white;
+}
+
+.calendar-dark .react-calendar__tile:hover {
+  background-color: #6b21a8; /* Hover effect */
+  color: white;
+}
+
+.calendar-dark .react-calendar__month-view__weekdays {
+  color: #cbd5e1; /* Light gray for weekdays */
+}

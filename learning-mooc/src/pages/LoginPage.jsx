@@ -54,7 +54,7 @@ function LoginPage() {
     >
       <div className={styles.page}>
         <div className={styles.wrapper}>
-          <img src="/website icon.png" alt="Platform Logo" style={{ width: '150px', margin: '0 auto 1rem' }} />
+          <img src="/9raOnlinePic.png" alt="Platform Logo" style={{ width: '150px', margin: '0 auto 1rem' }} />
           <h1 className={styles.title}>Login</h1>
           {error && <p className={styles.error}>{error}</p>}
           <form className={styles.form} onSubmit={handleLogin}>

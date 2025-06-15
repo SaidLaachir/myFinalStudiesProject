@@ -1,3 +1,4 @@
+// LoginPage.jsx
 import React, { useEffect, useState } from 'react';
 import styles from './LoginPage.module.css';
 import { Link, useNavigate } from 'react-router-dom';
@@ -53,6 +54,7 @@ function LoginPage() {
     >
       <div className={styles.page}>
         <div className={styles.wrapper}>
+          <img src="public\Icons\website icon.png" alt="Platform Logo" style={{ width: '150px', margin: '0 auto 1rem' }} />
           <h1 className={styles.title}>Login</h1>
           {error && <p className={styles.error}>{error}</p>}
           <form className={styles.form} onSubmit={handleLogin}>

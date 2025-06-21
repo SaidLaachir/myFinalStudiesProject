@@ -5,16 +5,46 @@ import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { FaUser } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+
+function useUnreadGeneralChat() {
+  const [hasUnread, setHasUnread] = useState(false);
+
+  useEffect(() => {
+    const checkUnread = async () => {
+      const q = query(
+        collection(db, "generalChat"),
+        orderBy("timestamp", "desc"),
+        limit(1)
+      );
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const lastMessage = querySnapshot.docs[0].data();
+        const lastVisit = parseInt(localStorage.getItem("lastVisitedGeneralChat") || "0");
+        const messageTime = lastMessage.timestamp?.toDate?.().getTime?.() || 0;
+        setHasUnread(messageTime > lastVisit);
+      }
+    };
+
+    checkUnread();
+    const interval = setInterval(checkUnread, 5000); // refresh every 5s
+    return () => clearInterval(interval);
+  }, []);
+
+  return hasUnread;
+}
 
 export default function Navbar({ darkMode, toggleDark }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileLinksOpen, setMobileLinksOpen] = useState(false);
-  const [showChatDot, setShowChatDot] = useState(false);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const hasUnread = useUnreadGeneralChat();
 
   const links = [
     { name: "Jobs", to: "/jobs" },
@@ -25,11 +55,7 @@ export default function Navbar({ darkMode, toggleDark }) {
 
   useEffect(() => {
     if (location.pathname === "/general-chat") {
-      localStorage.setItem("chatSeen", "true");
-      setShowChatDot(false);
-    } else {
-      const seen = localStorage.getItem("chatSeen") === "true";
-      setShowChatDot(!seen);
+      localStorage.setItem("lastVisitedGeneralChat", Date.now().toString());
     }
   }, [location.pathname]);
 
@@ -88,7 +114,7 @@ export default function Navbar({ darkMode, toggleDark }) {
               className="relative px-4 py-2 rounded-lg text-white transition duration-300 hover:scale-105 hover:bg-purple-600 dark:hover:bg-purple-500"
             >
               {link.name}
-              {link.name === "General Chat" && showChatDot && (
+              {link.name === "General Chat" && hasUnread && (
                 <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
               )}
             </Link>
@@ -185,7 +211,7 @@ export default function Navbar({ darkMode, toggleDark }) {
                 className="relative block py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
               >
                 {link.name}
-                {link.name === "General Chat" && showChatDot && (
+                {link.name === "General Chat" && hasUnread && (
                   <span className="absolute top-1 right-4 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
                 )}
               </Link>

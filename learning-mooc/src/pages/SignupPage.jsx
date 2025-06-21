@@ -14,7 +14,7 @@ function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -25,10 +25,19 @@ function SignupPage() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError("");
+    const newErrors = {};
+    setErrors({});
 
-    if (password !== repeatPassword) {
-      setError("Passwords do not match");
+    if (!firstName.trim()) newErrors.firstName = "First name is required.";
+    if (!lastName.trim()) newErrors.lastName = "Last name is required.";
+    if (!email.trim()) newErrors.email = "Email is required.";
+    else if (!email.endsWith("@uit.ac.ma")) newErrors.email = "Email must end with @uit.ac.ma.";
+    if (!password) newErrors.password = "Password is required.";
+    else if (password.length < 6) newErrors.password = "Password must be at least 6 characters.";
+    if (password !== repeatPassword) newErrors.repeatPassword = "Passwords do not match.";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -45,49 +54,40 @@ function SignupPage() {
       localStorage.setItem("userFirstName", firstName);
       navigate("/universities");
     } catch (err) {
-      setError(err.message);
+      setErrors({ general: "Email already in use or invalid input." });
     }
   };
 
   return (
-    <motion.div
-      className="min-h-screen login-bg"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
-    >
+    <motion.div className="min-h-screen login-bg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
       <div className={styles.page}>
         <div className={styles.wrapper}>
           <img src="/Icons/9raOnlinePic.png" alt="Platform Logo" style={{ width: '150px', margin: '0 auto 1rem' }} />
           <h1 className={styles.title}>Signup</h1>
-          {error && <p className={styles.error}>{error}</p>}
+          {errors.general && <p className={styles.error}>{errors.general}</p>}
           <form className={styles.form} onSubmit={handleSignup}>
             <div className={styles.inputGroup}>
-              <label htmlFor="firstname" className={styles.label}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="white">
-                  <path d="M12 12q-1.65 0-2.825-1.175Q8 9.65 8 8q0-1.65 1.175-2.825Q10.35 4 12 4q1.65 0 2.825 1.175Q16 6.35 16 8q0 1.65-1.175 2.825Q13.65 12 12 12Zm-6 8v-1.85q0-1.3.663-2.275Q7.325 14.9 8.45 14.4q1.1-.475 2.325-.713Q12 13.45 13.225 13.688q1.225.237 2.325.712 1.125.5 1.788 1.475Q18 16.85 18 18.15V20Z" />
-                </svg>
-              </label>
+              {errors.firstName && <p className={styles.error}>{errors.firstName}</p>}
+              <label htmlFor="firstname" className={styles.label}>👤</label>
               <input type="text" id="firstname" placeholder="First name" className={styles.input} value={firstName} onChange={(e) => setFirstName(e.target.value)} />
             </div>
             <div className={styles.inputGroup}>
-              <label htmlFor="lastname" className={styles.label}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="white">
-                  <path d="M12 12q-1.65 0-2.825-1.175Q8 9.65 8 8q0-1.65 1.175-2.825Q10.35 4 12 4q1.65 0 2.825 1.175Q16 6.35 16 8q0 1.65-1.175 2.825Q13.65 12 12 12Zm-6 8v-1.85q0-1.3.663-2.275Q7.325 14.9 8.45 14.4q1.1-.475 2.325-.713Q12 13.45 13.225 13.688q1.225.237 2.325.712 1.125.5 1.788 1.475Q18 16.85 18 18.15V20Z" />
-                </svg>
-              </label>
+              {errors.lastName && <p className={styles.error}>{errors.lastName}</p>}
+              <label htmlFor="lastname" className={styles.label}>👤</label>
               <input type="text" id="lastname" placeholder="Last name" className={styles.input} value={lastName} onChange={(e) => setLastName(e.target.value)} />
             </div>
             <div className={styles.inputGroup}>
+              {errors.email && <p className={styles.error}>{errors.email}</p>}
               <label htmlFor="email" className={styles.label}>@</label>
               <input type="email" id="email" placeholder="Email" className={styles.input} value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className={styles.inputGroup}>
+              {errors.password && <p className={styles.error}>{errors.password}</p>}
               <label htmlFor="password" className={styles.label}>🔒</label>
               <input type="password" id="password" placeholder="Password" className={styles.input} value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <div className={styles.inputGroup}>
+              {errors.repeatPassword && <p className={styles.error}>{errors.repeatPassword}</p>}
               <label htmlFor="repeat-password" className={styles.label}>🔒</label>
               <input type="password" id="repeat-password" placeholder="Repeat Password" className={styles.input} value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)} />
             </div>
